@@ -16,10 +16,25 @@ Firmware Bruce tùy chỉnh cho **ESP32-C5** với màn hình **ST7789 1.47" 172
 - 🤝 **Handshake Capture nâng cao**: APSTA mode, auto-deauth 10s, probe burst, hiển thị EAPOL realtime
 - 🛡️ **CSA PMF Bypass**: Bypass 802.11w PMF trên Android/Samsung bằng fake beacon với Channel Switch Announcement IE
 - 🔄 **Rescan**: Scan lại danh sách WiFi ngay trong menu không cần thoát
+- 🔓 **WPA3 Downgrade Attack**: Clone AP với captive portal tiếng Việt đẹp, deauth liên tục 60s
+- 🎯 **WPA3 Transition Mode Exploit**: CSA beacon injection + handshake capture tự động, bypass PMF
 
 ---
 
 ## 📋 Changelog
+
+### v1.0.5
+- **WPA3 Downgrade Attack**: Clone AP target với captive portal tiếng Việt (gradient design, animations, countdown timer)
+- **WPA3 Downgrade**: Deauth liên tục 60 giây, tự động dừng khi bắt được password
+- **WPA3 Downgrade**: Lưu credentials vào `vietnamese_creds.csv`
+- **WPA3 Transition Mode Exploit**: CSA beacon injection (tag 37) + Disassoc flood để bypass PMF
+- **WPA3 Transition Mode**: Tự động bắt WPA2 handshake khi client downgrade, hiển thị EAPOL counter (0-4)
+- **WPA3 Transition Mode**: Lưu handshake vào `/BrucePCAP/handshakes/HS_[BSSID]_[SSID].pcap`
+- **WPA3 Transition Mode**: Hỗ trợ mesh/dual-band (round-robin attack tất cả BSSID trong group)
+- **Evil Portal**: Background mode — portal chạy ngầm trong khi deauth tiếp tục
+- **Evil Portal**: Auto template selection — Vietnamese template tự động load cho WPA3 downgrade
+- **Menu**: Thêm "WPA3 Downgrade" vào WiFi → Wifi Atks
+- **Menu**: Thêm "WPA3 CSA+Disassoc" vào target menu (khi chọn 1 AP cụ thể)
 
 ### v1.0.4
 - **Deauth**: Thêm `send_csa_burst()` — inject beacon giả với CSA IE (tag 37) để bypass PMF/802.11w trên Android/Samsung. Beacon frame không được bảo vệ bởi PMF → buộc client disconnect
@@ -235,7 +250,7 @@ Module OUT- ── GND
 | IR TX VCC | 100nF gốm | ⭐ |
 | IR RX VCC | 100nF gốm | ⭐ |
 
-> ⚠️ Tụ hóa có phân cực: chân dài (+) vào VCC, chân ngắn (-) vào GND  
+> ⚠️ Tụ hóa có phân cực: chân dài (+) vào VCC, chân ngắn (-) vào GND
 > ✅ Tụ gốm 104 không phân cực: hàn chiều nào cũng được
 
 ---
@@ -326,7 +341,7 @@ pip install esptool
 
 ### Bước 3 — Flash
 
-> ⚠️ Thay `COM3` bằng cổng COM thực tế của bạn (Windows: Device Manager → Ports)  
+> ⚠️ Thay `COM3` bằng cổng COM thực tế của bạn (Windows: Device Manager → Ports)
 > ⚠️ Thay `vX.X.X` bằng version đã tải
 
 **Full flash (lần đầu hoặc sau khi đổi partitions):**
@@ -363,4 +378,33 @@ esptool.py --chip esp32c5 --port /dev/ttyUSB0 --baud 921600 write_flash -z \
 
 ---
 
-> ⚠️ **Disclaimer**: Firmware này chỉ dùng cho mục đích học tập và kiểm tra bảo mật trên các thiết bị/mạng bạn sở hữu hoặc được phép kiểm tra.
+## 📧 Liên Hệ
+
+- **GitHub**: [nhatowo/bruce-esp32c5-anhnhat07](https://github.com/nhatowo/bruce-esp32c5-anhnhat07)
+- **Facebook**: [fb.com/MYNAMEISNHAT07](https://fb.com/MYNAMEISNHAT07)
+- **Telegram**: [@AnhNhat07](https://t.me/AnhNhat07)
+
+---
+
+## ⚠️ Tuyên Bố Miễn Trừ Trách Nhiệm
+
+- Tác giả (**AnhNhat07**) **KHÔNG chịu trách nhiệm** về bất kỳ hành vi sử dụng sai mục đích nào
+- Người dùng **TỰ CHỊU TRÁCH NHIỆM HOÀN TOÀN** về mọi hành động của mình
+- Firmware được cung cấp **"NGUYÊN TRẠNG"** (AS-IS) không có bảo hành
+- Tác giả không khuyến khích, hỗ trợ hoặc tham gia vào bất kỳ hoạt động bất hợp pháp nào
+
+### 🎓 Mục Đích Sử Dụng
+
+Firmware này được phát triển **CHỈ** cho các mục đích sau:
+- 🔬 **Nghiên cứu bảo mật**: Tìm hiểu cách thức hoạt động của các giao thức WiFi
+- 🛡️ **Kiểm tra bảo mật**: Đánh giá độ an toàn của mạng WiFi **do bạn sở hữu**
+- 📚 **Giáo dục**: Học tập về wireless security và penetration testing
+- 🏢 **Pentest hợp pháp**: Kiểm tra bảo mật cho khách hàng **có hợp đồng rõ ràng**
+
+### 🚫 Nghiêm Cấm
+
+**KHÔNG ĐƯỢC** sử dụng firmware này để:
+- ❌ Tấn công mạng WiFi của người khác mà không có sự cho phép
+- ❌ Đánh cắp thông tin cá nhân, mật khẩu, dữ liệu của người khác
+- ❌ Gây gián đoạn dịch vụ mạng công cộng hoặc doanh nghiệp
+- ❌ Bất kỳ hành vi vi phạm pháp luật nào liên quan đến an ninh mạng
