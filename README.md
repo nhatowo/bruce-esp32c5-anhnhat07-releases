@@ -13,7 +13,7 @@ Firmware Bruce tùy chỉnh cho **ESP32-C5** với màn hình **ST7789 1.47" 172
 - 🖼️ **Boot screen**: Hỗ trợ `boot.jpg` và `boot.png` từ SD card
 - 📊 **Scan header**: Hiển thị số BSSID / SSID đã scan
 - ℹ️ **Info screen**: Hiển thị toàn bộ BSSID trong group (mesh aware)
-- 🤝 **Handshake Capture nâng cao**: APSTA mode, auto-deauth 10s, probe burst, hiển thị EAPOL realtime
+- 🤝 **Handshake Capture nâng cao**: mesh/dual-band (kênh từ scan), đổi kênh LEFT/RIGHT, UI cuộn đầy đủ, PCAP từng BSSID
 - 🛡️ **CSA PMF Bypass**: Bypass 802.11w PMF trên Android/Samsung bằng fake beacon với Channel Switch Announcement IE
 - 🔄 **Rescan**: Scan lại danh sách WiFi ngay trong menu không cần thoát
 - 🔓 **WPA3 Downgrade Attack**: Clone AP với captive portal tiếng Việt đẹp, deauth liên tục 60s
@@ -22,6 +22,13 @@ Firmware Bruce tùy chỉnh cho **ESP32-C5** với màn hình **ST7789 1.47" 172
 ---
 
 ## 📋 Changelog
+
+### v1.0.6
+- **Handshake Capture**: Truyền `ssidGroup` — chỉ dùng kênh thật từ scan (mesh/dual-band), không quét 1–14
+- **Handshake Capture**: LEFT cuộn lên / lùi kênh (ở đầu danh sách); RIGHT cuộn xuống hoặc kênh tiếp theo (cuối danh sách)
+- **Handshake Capture**: Chọn BSSID RSSI mạnh nhất trên mỗi kênh; đăng ký PCAP cho mọi BSSID trong nhóm
+- **Handshake Capture**: UI panel căn giữa, mục đầy đủ (network, target, kênh, BSSIDs, EAPOL M1–M4, activity), cuộn nội dung
+- **Handshake Capture**: Footer gọn 2 dòng (`L:up R:dn/ch SEL:deauth`, `BACK: stop`) — tối ưu màn 172×320, 3 nút
 
 ### v1.0.5
 - **WPA3 Downgrade Attack**: Clone AP target với captive portal tiếng Việt (gradient design, animations, countdown timer)
@@ -321,13 +328,14 @@ pio run -e esp32-c5-tft -t upload
 
 ### Bước 1 — Tải file BIN
 
-Vào trang **[Releases](https://github.com/nhatowo/bruce-esp32c5-anhnhat07/releases)**, chọn bản mới nhất và tải 3 file:
+Vào trang **[Releases](https://github.com/nhatowo/bruce-esp32c5-anhnhat07-releases/releases)**, chọn bản mới nhất:
 
 | File | Địa chỉ flash |
 |------|--------------|
-| `bootloader-vX.X.X.bin` | `0x0000` |
+| `bootloader-vX.X.X.bin` | `0x2000` (ESP32-C5) |
 | `partitions-vX.X.X.bin` | `0x8000` |
 | `firmware-vX.X.X.bin` | `0x10000` |
+| `Bruce-esp32-c5-tft-vX.X.X.bin` | `0x0` (gộp — flash một lần) |
 
 ---
 
@@ -344,10 +352,15 @@ pip install esptool
 > ⚠️ Thay `COM3` bằng cổng COM thực tế của bạn (Windows: Device Manager → Ports)
 > ⚠️ Thay `vX.X.X` bằng version đã tải
 
-**Full flash (lần đầu hoặc sau khi đổi partitions):**
+**Full flash — file gộp (khuyến nghị):**
+```bash
+esptool.py --chip esp32c5 --port COM3 --baud 921600 write_flash -z 0x0 Bruce-esp32-c5-tft-vX.X.X.bin
+```
+
+**Full flash — từng file (lần đầu hoặc sau khi đổi partitions):**
 ```bash
 esptool.py --chip esp32c5 --port COM3 --baud 921600 write_flash -z ^
-  0x0     bootloader-vX.X.X.bin ^
+  0x2000  bootloader-vX.X.X.bin ^
   0x8000  partitions-vX.X.X.bin ^
   0x10000 firmware-vX.X.X.bin
 ```
@@ -361,7 +374,7 @@ esptool.py --chip esp32c5 --port COM3 --baud 921600 write_flash -z ^
 **Linux/macOS** (thay `^` bằng `\`):
 ```bash
 esptool.py --chip esp32c5 --port /dev/ttyUSB0 --baud 921600 write_flash -z \
-  0x0     bootloader-vX.X.X.bin \
+  0x2000  bootloader-vX.X.X.bin \
   0x8000  partitions-vX.X.X.bin \
   0x10000 firmware-vX.X.X.bin
 ```
