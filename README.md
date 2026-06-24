@@ -23,6 +23,14 @@ Firmware Bruce tùy chỉnh cho **ESP32-C5** với màn hình **ST7789 1.47" 172
 
 ## 📋 Changelog
 
+### v1.0.7
+- **Multi Deauther**: Tích hợp CSA (Channel Switch Announcement - tag 37) Beacons để bypass PMF/802.11w trên cả băng tần 2.4GHz và 5GHz
+- **Multi Deauther**: Đồng bộ sức mạng với Target Deauther, giảm độ trễ chuyển kênh từ 50ms xuống còn 5ms (nhanh gấp 10 lần)
+- **Multi Deauther**: Tích hợp bộ xoay vòng qua 6 mã lý do ngắt kết nối khác nhau (Reason Code Rotation)
+- **Multi Deauther**: Bắn gói tin cường độ cao (15 CSA beacons, 20 deauths và 20 disassocs ở tốc độ tối đa của phần cứng)
+- **Sửa lỗi**: Khắc phục triệt để lỗi logic khởi tạo APSTA trong hàm `wifi_atk_setWifi()`, sửa lỗi deauth thất bại sau khi quét mạng
+- **Hiệu năng**: Ép công suất phát sóng (TX Power) tối đa `84` (~21dBm), tối ưu hóa WDT tránh sập/treo máy khi chạy lâu dài
+
 ### v1.0.6
 - **Handshake Capture**: Truyền `ssidGroup` — chỉ dùng kênh thật từ scan (mesh/dual-band), không quét 1–14
 - **Handshake Capture**: LEFT cuộn lên / lùi kênh (ở đầu danh sách); RIGHT cuộn xuống hoặc kênh tiếp theo (cuối danh sách)
