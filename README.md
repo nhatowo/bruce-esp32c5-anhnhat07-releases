@@ -7,6 +7,7 @@ Firmware Bruce tùy chỉnh cho **ESP32-C5** với màn hình **ST7789 1.47" 172
 ## ✨ Tính năng đã mod
 
 - 🎯 **Deauth nâng cao**: Channel hopping thông minh, reason code rotation
+- ⚔️ **Multi-Target Deauther**: Tấn công deauth nhiều AP/BSSID (mesh/dual-band) cùng lúc, tự động xoay mã lý do (Reason Rotation) và bypass PMF/802.11w bằng CSA Beacons
 - 📡 **SSID Grouping**: Gom mesh/dual-band theo SSID, hiển thị tất cả BSSID
 - 💪 **TX Power tối đa**: 84 units (~20 dBm) + disassoc frame
 - 🖥️ **Status bar**: Hiển thị `AnhNhat07 | HH:MM:SS`
